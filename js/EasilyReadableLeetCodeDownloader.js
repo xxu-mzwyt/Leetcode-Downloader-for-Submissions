@@ -52,6 +52,29 @@ LeetCodeSubmissionDownloader.last = 0;
 LeetCodeSubmissionDownloader.waitUsedBetweenRequests = LeetCodeSubmissionDownloader.WAIT_BETWEEN_REQUESTS;
 LeetCodeSubmissionDownloader.folderContents = new JSZip();
 
+// converter for leetcode programming 
+// language representation to actual language extensions
+// all available languages as of 08-02-2021
+extConverter = {
+	"python3" : "py",
+	"python" : "py",
+	"java" : "java",
+	"cpp" : "cpp",
+	"csharp" : "cs",
+	"javascript" : "js",
+	"ruby" : "rb",
+	"swift" : "swift",
+	"golang" : "go",
+	"scala" : "sc",
+	"kotlin" : "kt",
+	"rust" : "rs",
+	"typescript" : "ts",
+	"racket" : "rkt",
+	"erlang" : "erl",
+	"elixir" : "ex",
+	"php" : "php"
+}
+
 
 function sleep(ms) {
 
@@ -128,8 +151,18 @@ LeetCodeSubmissionDownloader.processAPIResults = async function(lastWebResult) {
 		let problemFolder = LeetCodeSubmissionDownloader.folderContents.folder(submissionsFound[i].title_slug);
 		let typeOfSubmissionFolder = problemFolder.folder(submissionsFound[i].status_display);
 		let dateFolder = typeOfSubmissionFolder.folder(new Date(submissionsFound[i].timestamp * 1000).toLocaleString('en-us').replaceAll("/", "-"));
-		
-		let sourceCodeFileName = "Solution." + String(submissionsFound[i].lang);
+
+		let fileExtension = "";
+
+		let leetcodeLangName = submissionsFound[i].lang;
+		// if converter covers current language --> convert
+		if (leetcodeLangName in extConverter)
+			fileExtension = extConverter[leetcodeLangName];
+		// o.w use leetcode representation
+		else
+			fileExtension = leetcodeLangName;
+
+		let sourceCodeFileName = "Solution." + fileExtension;
 		let sourceCodeFileContents = "\/\/ " + LeetCodeSubmissionDownloader.BASE_PROBLEM_ADDRESS + String(submissionsFound[i].title_slug) + "\n\n" + String(submissionsFound[i].code);
 		
 		let infoFile = dateFolder.file("info.txt", JSON.stringify(submissionsFound[i]));
