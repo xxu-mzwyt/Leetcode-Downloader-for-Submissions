@@ -1,5 +1,8 @@
 # LeetCode Submission Downloader
 
+**XXu update (for self-use): Now download all ACCEPTED files into the same folder, with filenames containing question id, name, and datetime.**
+
+
 **This is a program that is intended to be ran in the console on leetcode.com**. I wanted to download all of my previous submissions for LeetCode, however, all of the different programs available (that I found) required installing and running different programs. After using several broken methods, I felt like this was really overcomplicated, especially since LeetCode has an easily accesible API and many others were often using the web driver for Chrome instead of something simple like this. (with account logins or cookies needing to be provided)
 
 # Setup for use
