@@ -76,6 +76,20 @@ extConverter = {
 }
 
 
+commentConverter = {
+	"python3" : "#",
+	"python" : "#",
+	"cpp" : "\/\/",
+	"csharp" : "\/\/",
+	"javascript" : "\/\/",
+	"ruby" : "#",
+	"golang" : "\/\/",
+	"rust" : "\/\/",
+	"typescript" : "\/\/",
+	"racket" : ";"
+}
+
+
 function sleep(ms) {
 
 	return new Promise(resolve => setTimeout(resolve, ms));
@@ -148,9 +162,9 @@ LeetCodeSubmissionDownloader.processAPIResults = async function(lastWebResult) {
 	
 	for(let i = 0; i < submissionsFound.length; i++) {
 		
-		let problemFolder = LeetCodeSubmissionDownloader.folderContents.folder(submissionsFound[i].title_slug);
-		let typeOfSubmissionFolder = problemFolder.folder(submissionsFound[i].status_display);
-		let dateFolder = typeOfSubmissionFolder.folder(new Date(submissionsFound[i].timestamp * 1000).toLocaleString('en-us').replaceAll("/", "-"));
+		// let problemFolder = LeetCodeSubmissionDownloader.folderContents.folder(submissionsFound[i].title_slug);
+		// let typeOfSubmissionFolder = problemFolder.folder(submissionsFound[i].status_display);
+		// let dateFolder = typeOfSubmissionFolder.folder(new Date(submissionsFound[i].timestamp * 1000).toLocaleString('en-us').replaceAll("/", "-"));
 
 		let fileExtension = "";
 
@@ -162,11 +176,20 @@ LeetCodeSubmissionDownloader.processAPIResults = async function(lastWebResult) {
 		else
 			fileExtension = leetcodeLangName;
 
-		let sourceCodeFileName = "Solution." + fileExtension;
-		let sourceCodeFileContents = "\/\/ " + LeetCodeSubmissionDownloader.BASE_PROBLEM_ADDRESS + String(submissionsFound[i].title_slug) + "\n\n" + String(submissionsFound[i].code);
+		let commentOperator = "\/\/";
+		if (leetcodeLangName in extConverter)
+			commentOperator = commentConverter[leetcodeLangName];
+		// o.w use leetcode representation
+
+		let sourceCodeFileName = submissionsFound[i].question_id + "_" + submissionsFound[i].title_slug + "_" + new Date(submissionsFound[i].timestamp * 1000).toISOString() + "." + fileExtension;
+		let sourceCodeFileContents = commentOperator + " " + LeetCodeSubmissionDownloader.BASE_PROBLEM_ADDRESS + String(submissionsFound[i].title_slug) + "\n\n" + String(submissionsFound[i].code);
 		
-		let infoFile = dateFolder.file("info.txt", JSON.stringify(submissionsFound[i]));
-		let submissionSourceCode = dateFolder.file(sourceCodeFileName, sourceCodeFileContents);
+		// let infoFile = dateFolder.file("info.txt", JSON.stringify(submissionsFound[i]));
+
+		// put all files in the same folder
+		if (submissionsFound[i].status_display == "Accepted"){
+			let submissionSourceCode = LeetCodeSubmissionDownloader.folderContents.file(sourceCodeFileName, sourceCodeFileContents);
+		}
 		
 	}
 	
